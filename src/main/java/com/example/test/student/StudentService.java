@@ -69,4 +69,9 @@ public class StudentService {
 
         }
     }
+
+    public Student getStudent(Long studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalStateException("L'étudiant " +studentId+ " n'existe pas"));
+    }
 }
