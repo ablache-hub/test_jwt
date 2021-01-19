@@ -18,9 +18,16 @@ public class StudentService {
     }
 
 
-    public List<Student> getStudents() {
+    public List<Student> getAllStudents() {
         return studentRepository.findAll();
-    };
+    }
+
+
+    public Student getStudent(Long studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalStateException("L'étudiant " +studentId+ " n'existe pas"));
+    }
+
 
     public void addStudent(Student student) {
         Optional<Student> studentExist = studentRepository.findStudentByEmail(student.getEmail());
@@ -31,6 +38,7 @@ public class StudentService {
             studentRepository.save(student);
     }
 
+
     public void deleteById(Long id) {
         boolean studentExist = studentRepository.existsById(id);
 
@@ -39,6 +47,7 @@ public class StudentService {
         else
             studentRepository.deleteById(id);
     }
+
 
     @Transactional
     public void updateStudent(Long studentId,
@@ -70,8 +79,4 @@ public class StudentService {
         }
     }
 
-    public Student getStudent(Long studentId) {
-        return studentRepository.findById(studentId)
-                .orElseThrow(() -> new IllegalStateException("L'étudiant " +studentId+ " n'existe pas"));
-    }
 }

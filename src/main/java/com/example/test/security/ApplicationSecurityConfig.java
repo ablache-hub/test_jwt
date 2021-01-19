@@ -4,6 +4,8 @@ package com.example.test.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -15,6 +17,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) //Permet l'utilisation de PreAuthorize dans le controller
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
@@ -31,9 +34,15 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
+                csrf().disable().
                 authorizeRequests().
-                antMatchers("/", "/index").
-                permitAll().
+                antMatchers("/", "/index").permitAll().
+//                antMatchers("/api/v1/**").hasRole(ApplicationUserRole.STUDENT.name()).
+//                antMatchers(HttpMethod.DELETE, "/api/v1/**").hasAuthority(ApplicationUserPermission.STUDENT_WRITE.name()).
+//                antMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority(ApplicationUserPermission.STUDENT_WRITE.name()).
+//                antMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority(ApplicationUserPermission.STUDENT_WRITE.name()).
+//                antMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole(ApplicationUserRole.STUDENT.name(), ApplicationUserRole.ADMIN.name(), ApplicationUserRole.ADMINTEST.name()).
+
                 anyRequest().
                 authenticated().
                 and().
@@ -48,18 +57,30 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
         UserDetails userDetailsAlex = User.builder()
                 .username("alex")
                 .password(passwordEncoder.encode("test"))
-                .roles("STUDENT")
+//                .roles(ApplicationUserRole.STUDENT.name())
+                .authorities(ApplicationUserRole.STUDENT.getGrantedAuthorities())
                 .build();
 
         UserDetails userDetailsBilly = User.builder()
                 .username("billy")
-                .password(passwordEncoder.encode("test2"))
-                .roles("ADMIN")
+                .password(passwordEncoder.encode("test"))
+//                .roles(ApplicationUserRole.ADMIN.name())
+                .authorities(ApplicationUserRole.ADMIN.getGrantedAuthorities())
+
+                .build();
+
+        UserDetails userDetailsTom = User.builder()
+                .username("tom")
+                .password(passwordEncoder.encode("test"))
+//                .roles(ApplicationUserRole.ADMINTEST.name())
+                .authorities(ApplicationUserRole.ADMINTEST.getGrantedAuthorities())
+
                 .build();
 
         return new InMemoryUserDetailsManager(
                 userDetailsAlex,
-                userDetailsBilly
+                userDetailsBilly,
+                userDetailsTom
         );
 
     }
