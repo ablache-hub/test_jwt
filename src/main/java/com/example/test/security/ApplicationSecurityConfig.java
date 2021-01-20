@@ -14,11 +14,24 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+//@EnableWebMvc
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true) //Permet l'utilisation de PreAuthorize dans le controller
 public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
+
+//    public class MvcConfig implements WebMvcConfigurer {
+//
+//        @Override
+//        public void addViewControllers(ViewControllerRegistry registry) {
+//            registry.addViewController("/login").setViewName("login");
+//        }
+//    }
 
 
     private final PasswordEncoder passwordEncoder;
@@ -37,18 +50,14 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                 csrf().disable().
                 authorizeRequests().
                 antMatchers("/", "/index").permitAll().
-//                antMatchers("/api/v1/**").hasRole(ApplicationUserRole.STUDENT.name()).
-//                antMatchers(HttpMethod.DELETE, "/api/v1/**").hasAuthority(ApplicationUserPermission.STUDENT_WRITE.name()).
-//                antMatchers(HttpMethod.POST, "/api/v1/**").hasAuthority(ApplicationUserPermission.STUDENT_WRITE.name()).
-//                antMatchers(HttpMethod.PUT, "/api/v1/**").hasAuthority(ApplicationUserPermission.STUDENT_WRITE.name()).
-//                antMatchers(HttpMethod.GET, "/api/v1/**").hasAnyRole(ApplicationUserRole.STUDENT.name(), ApplicationUserRole.ADMIN.name(), ApplicationUserRole.ADMINTEST.name()).
-
                 anyRequest().
                 authenticated().
                 and().
-                httpBasic();
+                formLogin().
+                loginPage("/login").permitAll().
+                defaultSuccessUrl("/default", true);
+//                httpBasic();
     }
-
 
     //Création d'un user
     @Override
