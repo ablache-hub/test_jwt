@@ -7,18 +7,20 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 //Roles possibles
-public enum ApplicationUserRole { //On liste les roles avec leurs permissions
+public enum AppUserRole { //On liste les roles avec leurs permissions
     STUDENT(Sets.newHashSet()),
-    ADMIN(Sets.newHashSet(ApplicationUserPermission.STUDENT_READ, ApplicationUserPermission.STUDENT_WRITE)),
-    ADMINTEST(Sets.newHashSet(ApplicationUserPermission.STUDENT_READ));
+    ADMIN(Sets.newHashSet(AppUserPermission.STUDENT_READ, AppUserPermission.STUDENT_WRITE)),
+    ADMINTEST(Sets.newHashSet(AppUserPermission.STUDENT_READ)),
+    USER(Sets.newHashSet(AppUserPermission.STUDENT_READ));
 
-    private final Set<ApplicationUserPermission> permissions;
+    private final Set<AppUserPermission> permissions;
 
-    ApplicationUserRole(Set<ApplicationUserPermission> permissions) {
+    AppUserRole(Set<AppUserPermission> permissions) {
         this.permissions = permissions;
     }
 
-    public Set<ApplicationUserPermission> getPermissions() {
+
+    public Set<AppUserPermission> getPermissions() {
         return permissions;
     }
 

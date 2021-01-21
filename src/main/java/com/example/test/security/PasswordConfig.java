@@ -11,9 +11,11 @@ public class PasswordConfig {
 
     @Bean
     //PasswordEncoder est une interface comportant des méthodes en rapport avec l'encodage des mdp
-    public PasswordEncoder passwordEncoder() {
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+
+
 
 
 }
