@@ -1,14 +1,17 @@
 package com.example.test.student;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.time.LocalDate;
 import java.time.Period;
 
 @Entity
 @Table
+@NoArgsConstructor
+@AllArgsConstructor
 public @Data
 class Student {
 
@@ -20,19 +23,6 @@ class Student {
     private LocalDate anniv;
     private int age;
 
-    public Student() {
-    }
-
-    public Student(Long id,
-                   String name,
-                   String email,
-                   LocalDate anniv
-                  ) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.anniv = anniv;
-    }
 
     public Student(String name,
                    String email,

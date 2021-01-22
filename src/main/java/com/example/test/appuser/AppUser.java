@@ -2,6 +2,7 @@ package com.example.test.appuser;
 
 
 import com.example.test.security.AppUserRole;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,7 @@ import java.util.Collections;
 //On importe toutes les fonctions d'userDetails pour les modifier à notre convenance
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class AppUser implements UserDetails {
 
@@ -53,25 +55,11 @@ public class AppUser implements UserDetails {
         return Collections.singletonList(authority);
     }
 
-    @Override
-    public String getPassword() {
-
-        return password;
-    }
 
     @Override
     public String getUsername() {
         return email ;
     }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
 
     @Override
     public boolean isAccountNonExpired() {

@@ -1,11 +1,15 @@
 package com.example.test.security;
 
 import com.google.common.collect.Sets;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
+@Getter
 //Roles possibles
 public enum AppUserRole { //On liste les roles avec leurs permissions
     STUDENT(Sets.newHashSet()),
@@ -14,15 +18,6 @@ public enum AppUserRole { //On liste les roles avec leurs permissions
     USER(Sets.newHashSet(AppUserPermission.STUDENT_READ));
 
     private final Set<AppUserPermission> permissions;
-
-    AppUserRole(Set<AppUserPermission> permissions) {
-        this.permissions = permissions;
-    }
-
-
-    public Set<AppUserPermission> getPermissions() {
-        return permissions;
-    }
 
 
     public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
