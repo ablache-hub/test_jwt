@@ -20,12 +20,13 @@ public enum AppUserRole { //On liste les roles avec leurs permissions
     private final Set<AppUserPermission> permissions;
 
 
+/*    //Fournit les permissions associées aux différents rôles
     public Set<SimpleGrantedAuthority> getGrantedAuthorities() {
        Set<SimpleGrantedAuthority> permissions = getPermissions().stream()
                 .map(permission -> new SimpleGrantedAuthority(permission.name()))
                 .collect(Collectors.toSet());
        permissions.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
        return permissions;
-    }
+    }*/
 }
 

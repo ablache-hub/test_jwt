@@ -9,7 +9,7 @@ INSERT INTO `app_user`
  `password`)
 
 VALUES
-('1',
+('0',
  'USER',
  'a.blache@gmail.com',
  1,

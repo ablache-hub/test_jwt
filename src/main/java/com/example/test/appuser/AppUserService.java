@@ -34,6 +34,7 @@ public class AppUserService implements UserDetailsService {
         if(exist) {
             throw new IllegalStateException("Cet email est déjà utilisé");
         }
+
         String encodedPassword = bCryptPasswordEncoder.encode(appUser.getPassword());
         appUser.setPassword(encodedPassword);
 
