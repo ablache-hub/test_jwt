@@ -3,7 +3,9 @@ package com.example.test.appuser;
 
 import com.example.test.security.AppUserRole;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +16,8 @@ import java.util.Collections;
 
 //@EnableAutoConfiguration
 //On importe toutes les fonctions d'userDetails pour les modifier à notre convenance
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @Entity
 public class AppUser implements UserDetails {
@@ -33,7 +36,7 @@ public class AppUser implements UserDetails {
     @Enumerated(EnumType.STRING)
     private AppUserRole appUserRole;
     private Boolean locked = false;
-    private Boolean enabled = false;
+    private Boolean enabled = true;
 
     public AppUser(String firstName,
                    String lastName,
@@ -52,7 +55,6 @@ public class AppUser implements UserDetails {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + appUserRole.name());
         return Collections.singletonList(authority);
     }
-
 
 
     @Override

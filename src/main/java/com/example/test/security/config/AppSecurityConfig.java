@@ -2,6 +2,7 @@ package com.example.test.security.config;
 
 
 import com.example.test.appuser.AppUserService;
+import com.example.test.jwt.JwtConfig;
 import com.example.test.jwt.JwtTokenVerifier;
 import com.example.test.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import lombok.AllArgsConstructor;
@@ -22,6 +23,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import javax.crypto.SecretKey;
+
 //@EnableWebMvc
 @Configuration
 @AllArgsConstructor
@@ -29,9 +32,11 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 @EnableGlobalMethodSecurity(prePostEnabled = true) //Permet l'utilisation de PreAuthorize dans le controller
 public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private final JwtConfig jwtConfig;
+    private final SecretKey secretKey;
 
-    private AppUserService appUserService;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+   /* private final AppUserService appUserService;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;*/
 
     //Implémente l'authentification simple, par défaut un mdp aléatoire sera crée au lancement du serveur avec
     //l'id par défaut "user"
@@ -40,13 +45,13 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         http.
                 csrf().disable().
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
-          /*     On importe notre filtre crée précedement, il récupere les données de connection, vérifie leur validité
-                 crée et retourne le JWT  */
-        addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager())).
-                addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class).
+                /*     On importe notre filtre crée précedement, il récupere les données de connection, vérifie leur validité
+                       crée et retourne le JWT  */
+                        addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager(), jwtConfig, secretKey)).
+                addFilterAfter(new JwtTokenVerifier(secretKey, jwtConfig), JwtUsernameAndPasswordAuthenticationFilter.class).
                 authorizeRequests().
-                antMatchers(/*"/", "/index",*/ "/registration/").permitAll().
-                anyRequest().
+//                antMatchers(/*"/", "/index",*/ "/registration").permitAll().
+        anyRequest().
                 authenticated();
 //                and().
 //                formLogin();
@@ -55,24 +60,26 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
 //                httpBasic();
     }
 
+    // Liste d'exlusion des URI voulues publiques de nos filtres
     @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/registration");
+    }
+
+  /*  @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
-    //An AuthenticationProvider implementation that retrieves user details from a UserDetailsService.
+    // An AuthenticationProvider implementation that retrieves user details from a UserDetailsService.
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(bCryptPasswordEncoder);
         provider.setUserDetailsService(appUserService);
         return provider;
-    }
+    }*/
 
-    @Override
-    public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/registration");
-    }
 
     //Création d'un user
     /*@Override
