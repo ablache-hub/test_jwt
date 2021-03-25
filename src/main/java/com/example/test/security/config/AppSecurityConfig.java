@@ -2,6 +2,7 @@ package com.example.test.security.config;
 
 
 import com.example.test.appuser.AppUserService;
+import com.example.test.jwt.JwtTokenVerifier;
 import com.example.test.jwt.JwtUsernameAndPasswordAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +11,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -41,8 +43,9 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
           /*     On importe notre filtre crée précedement, il récupere les données de connection, vérifie leur validité
                  crée et retourne le JWT  */
         addFilter(new JwtUsernameAndPasswordAuthenticationFilter(authenticationManager())).
+                addFilterAfter(new JwtTokenVerifier(), JwtUsernameAndPasswordAuthenticationFilter.class).
                 authorizeRequests().
-                antMatchers("/", "/index", "/api/v*/registration/**").permitAll().
+                antMatchers(/*"/", "/index",*/ "/registration/").permitAll().
                 anyRequest().
                 authenticated();
 //                and().
@@ -64,6 +67,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         provider.setPasswordEncoder(bCryptPasswordEncoder);
         provider.setUserDetailsService(appUserService);
         return provider;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/registration");
     }
 
     //Création d'un user

@@ -40,19 +40,33 @@ public class JwtTokenVerifier extends OncePerRequestFilter {
             filterChain.doFilter(request,response);
         }
 
+        String token = authorizationHeader.replace("Bearer ","");
+
         try {
-            String token = authorizationHeader.replace("Bearer ","");
             Jws<Claims> jwsClaim = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes()))
                     .build().parseClaimsJws(token);
 
             Claims body = jwsClaim.getBody();
             String username = body.getSubject();
-            Collection<? extends GrantedAuthority> authorities = (SimpleGrantedAuthority)body.get("authorities");
+            var authorities = (List<Map<String, String>>) body.get("authorities");
 
-            Authentication authentication = new UsernamePasswordAuthenticationToken(username,null,authorities);
-            SecurityContextHolder.getContext().setAuthentication(null);
+            Set<SimpleGrantedAuthority> simpleGrantedAuthorities = authorities.stream()
+                    .map(m -> new SimpleGrantedAuthority(m.get("authority")))
+                    .collect(Collectors.toSet());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    username,
+                    null,
+                    simpleGrantedAuthorities
+            );
 
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        } catch (JwtException e) {
+            throw new IllegalStateException(String.format("Token %s cannot be trusted", token));
+        }
+
+        filterChain.doFilter(request, response);
         }
     }
-}
+
